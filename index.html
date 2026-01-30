@@ -1,572 +1,793 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rolling Greens Golf Course | Mount Sterling, IL</title>
-  <meta name="description" content="Rolling Greens Golf Course in Mount Sterling, IL. Rates, daily specials, course conditions, and contact info." />
-  <style>
-    :root{
-      --bg: #f0fdf4;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted:#475569;
-      --green:#059669;
-      --green2:#065f46;
-      --ring: rgba(15, 23, 42, .08);
-      --shadow: 0 12px 30px rgba(0,0,0,.08);
-      --radius: 18px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, var(--bg), #fff);
-      color:var(--text);
-    }
-    a{color:inherit}
-    .container{max-width:1100px;margin:0 auto;padding:0 16px}
-    .topbar{
-      position:sticky; top:0; z-index:50;
-      background: rgba(255,255,255,.75);
-      backdrop-filter: blur(10px);
-      border-bottom:1px solid var(--ring);
-    }
-    .topbar-inner{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:12px 0;
-    }
-    .brand{display:flex; align-items:center; gap:12px}
-    .logo{
-      width:46px; height:46px; border-radius:14px;
-      border:1px solid var(--ring); background:#fff;
-      display:flex; align-items:center; justify-content:center;
-      overflow:hidden;
-    }
-    .logo img{width:100%; height:100%; object-fit:contain; padding:4px}
-    .title{line-height:1.1}
-    .title b{display:block; font-size:14px}
-    .title span{display:block; font-size:12px; color:var(--muted)}
-    nav{display:none; gap:6px}
-    nav a{
-      text-decoration:none; font-weight:600; font-size:14px;
-      padding:8px 10px; border-radius:12px;
-    }
-    nav a:hover{background:rgba(15,23,42,.06)}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      gap:8px;
-      background: var(--green);
-      color:#fff; text-decoration:none; font-weight:700; font-size:14px;
-      padding:10px 14px; border-radius:16px;
-      box-shadow: 0 6px 16px rgba(5,150,105,.18);
-    }
-    .btn:hover{background:#047857}
-    .btn.secondary{
-      background:#fff; color:var(--text);
-      border:1px solid var(--ring); box-shadow:none;
-    }
-    .btn.secondary:hover{background:rgba(15,23,42,.04)}
-    .banner-wrap{padding-top:14px}
-    .banner{
-      background:#ecfdf5;
-      border:1px solid rgba(5,150,105,.25);
-      color:#064e3b;
-      padding:12px 14px;
-      border-radius: var(--radius);
-      font-weight:800;
-      box-shadow: 0 6px 18px rgba(5,150,105,.10);
-    }
+import React, { useEffect, useMemo, useState } from "react";
+import { MapPin, Phone, Clock, Flag, Calendar, DollarSign, CloudSun, Info, Mail, Share2 } from "lucide-react";
 
-    .hero{padding:18px 0 22px}
-    .grid2{display:grid; gap:16px}
-    @media (min-width: 900px){
-      nav{display:flex}
-      .grid2{grid-template-columns: 1.15fr .85fr; align-items:start}
-    }
-    .pill{
-      display:inline-flex; gap:8px; align-items:center;
-      background:#ecfdf5; border:1px solid rgba(5,150,105,.25);
-      color:#064e3b; font-weight:700;
-      padding:7px 10px; border-radius:999px; font-size:12px;
-    }
-    h1{margin:10px 0 8px; font-size:30px; letter-spacing:-.02em}
-    @media (min-width:900px){ h1{font-size:38px} }
-    .lead{margin:0; color:var(--muted); font-size:16px; max-width:62ch}
-    .actions{margin-top:14px; display:flex; flex-wrap:wrap; gap:10px}
-    .meta{margin-top:12px; display:flex; flex-wrap:wrap; gap:14px; color:var(--muted); font-weight:600; font-size:14px}
-    .card{
-      background:rgba(255,255,255,.85);
-      border:1px solid var(--ring);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .card-pad{padding:14px}
-    .card h3{margin:0 0 10px; font-size:14px}
-    .badge{
-      font-size:12px; font-weight:800;
-      background:#ecfdf5; border:1px solid rgba(5,150,105,.25);
-      color:#064e3b; padding:4px 8px; border-radius:999px;
-    }
-    .board{display:grid; gap:10px; margin-top:10px}
-    .tile{
-      background:rgba(15,23,42,.04);
-      border:1px solid rgba(15,23,42,.06);
-      border-radius:16px;
-      padding:12px;
-    }
-    .tile .top{display:flex; justify-content:space-between; color:var(--muted); font-size:12px; font-weight:700}
-    .tile .val{margin-top:4px; font-size:18px; font-weight:900}
-    .tile .note{margin-top:4px; color:var(--muted); font-size:13px; font-weight:600}
+// Rolling Greens Golf Course — Mount Sterling, IL
+// Single-file, mobile-first website draft.
+// Swap LOGO_URL when you provide the final logo/photo.
 
-    .section{padding:18px 0}
-    .section-head{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; margin-bottom:10px}
-    .section-head h2{margin:0; font-size:22px; letter-spacing:-.01em}
-    .section-head p{margin:4px 0 0; color:var(--muted); font-weight:600; font-size:14px}
-    .grid4{display:grid; gap:10px}
-    @media(min-width:700px){ .grid4{grid-template-columns: repeat(2,1fr)} }
-    @media(min-width:1000px){ .grid4{grid-template-columns: repeat(4,1fr)} }
-    .rate{
-      background:rgba(15,23,42,.04);
-      border:1px solid rgba(15,23,42,.06);
-      border-radius:16px;
-      padding:12px;
-    }
-    .rate .label{color:var(--muted); font-weight:800; font-size:12px}
-    .rate .price{margin-top:5px; font-weight:950; font-size:18px}
+const LOGO_URL = "/mnt/data/Logo.jpg"; // TODO: replace with your uploaded logo path
 
-    .contact-grid{display:grid; gap:12px}
-    @media(min-width:900px){ .contact-grid{grid-template-columns: 1.2fr .8fr} }
+const course = {
+  name: "Rolling Greens Golf Course",
+  city: "Mount Sterling, IL",
+  phone: "217-773-3085",
+  addressLine1: "750 E Street",
+  addressLine2: "Mount Sterling, IL",
+  hours: "Dawn to Dusk (seasonal)",
+  email: "info@rollinggreensgolf.com", // placeholder
+  facebookUrl: "#", // TODO
+  instagramUrl: "#", // TODO
+};
 
-    .admin{
-      margin-top:12px;
-      background:#fff;
-      border:1px solid var(--ring);
-      border-radius:16px;
-      padding:12px;
-    }
-    .admin small{color:var(--muted); font-weight:700}
-    .row{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px}
-    .toggle{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px; border-radius:12px;
-      background:rgba(15,23,42,.04);
-      border:1px solid rgba(15,23,42,.06);
-      font-weight:800; font-size:13px; color:var(--text);
-    }
-    input[type="checkbox"]{transform:scale(1.15)}
-    .preset{
-      border:none; cursor:pointer;
-      background:#0f172a; color:#fff;
-      font-weight:900; font-size:12px;
-      padding:10px 10px; border-radius:12px;
-    }
-    .preset:hover{background:#111827}
-    .field{
-      width:100%;
-      padding:11px 12px;
-      border-radius:14px;
-      border:1px solid rgba(15,23,42,.12);
-      outline:none;
-      font-weight:700;
-    }
-    .field:focus{border-color: rgba(5,150,105,.55); box-shadow: 0 0 0 4px rgba(5,150,105,.12)}
-    footer{
-      border-top:1px solid var(--ring);
-      padding:18px 0 26px;
-      color:var(--muted);
-      font-weight:700;
-      font-size:13px;
-    }
-  </style>
-</head>
+const TEMP_OVERRIDE = {
+  enabled: false, // set true to force a temporary message
+  title: "Course Update",
+  value: "",
+  note: "",
+  badge: "Alert",
+};
 
-<body>
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <div class="brand">
-        <div class="logo">
-          <img src="Logo.jpg" alt="Rolling Greens logo" onerror="this.style.display='none';" />
-        </div>
-        <div class="title">
-          <b>Rolling Greens Golf Course</b>
-          <span>Mount Sterling, IL</span>
-        </div>
-      </div>
+const buildAnnouncements = (day, override) => {
+  // Base status cards
+  const base = [
+    {
+      title: "Course Status",
+      value: "OPEN",
+      note: "Call pro shop for frost delays.",
+      badge: "Today",
+    },
+    {
+      title: "Cart Policy",
+      value: "90° Rule",
+      note: "Please follow signage and staff direction.",
+      badge: "Update",
+    },
+  ];
 
-      <nav>
-        <a href="#rates">Rates</a>
-        <a href="#conditions">Conditions</a>
-        <a href="#contact">Contact</a>
-      </nav>
+  // Daily specials
+  if (day === 1) {
+    // Monday
+    base.push({
+      title: "Monday Special",
+      value: "$30 Unlimited Play",
+      note: "Season-long deal. Play all day.",
+      badge: "Special",
+    });
+  }
 
-      <a class="btn" id="callBtn" href="tel:2177733085">Call</a>
+  if (day === 2) {
+    // Tuesday
+    base.push({
+      title: "Tuesday Senior / Ladies Special",
+      value: "$30 — 18 Holes",
+      note: "60+ • Includes free hot dog & chips.",
+      badge: "Special",
+    });
+  }
+
+  // Temporary override card (shows at the top of the board)
+  if (override?.enabled && (override.title || override.value || override.note)) {
+    base.unshift({
+      title: override.title || "Notice",
+      value: override.value || "",
+      note: override.note || "",
+      badge: "Override",
+    });
+  }
+
+  // Always show greens condition
+  base.push({
+    title: "Greens",
+    value: "Good",
+    note: "Pin sheet posted daily in the pro shop.",
+    badge: "Conditions",
+  });
+
+  return base;
+};
+
+const getDefaultBanner = (day) => {
+  if (day === 1) return "Today’s Special: $30 Monday Unlimited Play (Season-long)";
+  if (day === 2) return "Today’s Special: $30 Tuesday Senior/Ladies (60+) — Free hot dog & chips";
+  return "";
+};
+
+
+const quickLinks = [
+  {
+    title: "Book a Tee Time",
+    desc: "Online booking coming soon — for now, call the pro shop.",
+    icon: Flag,
+    href: "tel:", // replaced at runtime
+    cta: "Call to Book",
+  },
+  {
+    title: "Book an Outing",
+    desc: "Plan a scramble, fundraiser, or company golf day — we’ll help you run it smoothly.",
+    icon: Calendar,
+    href: "#outing",
+    cta: "Outing Info",
+  },
+  {
+    title: "Rates",
+    desc: "Green fees, specials, and membership info.",
+    icon: DollarSign,
+    href: "#rates",
+    cta: "View Rates",
+  },
+  {
+    title: "Course Conditions",
+    desc: "Cart rules, maintenance notes, and daily updates.",
+    icon: CloudSun,
+    href: "#conditions",
+    cta: "View Updates",
+  },
+];
+
+const ratesTemplate = [
+  { label: "Monday Unlimited Play (Season-long)", value: "$30" },
+  { label: "Tuesday Senior / Ladies Special (60+)", value: "$30" },
+  { label: "Tuesday Special Includes", value: "18 holes + free hot dog & chips" },
+  { label: "Weekday 18 (with cart)", value: "$42" },
+  { label: "Weekend 18 (with cart)", value: "$47" },
+  { label: "Weekday 9 (with cart)", value: "$26" },
+  { label: "Weekend 9 (with cart)", value: "$31" },
+  { label: "Memberships", value: "Ask" },
+];
+
+const eventsTemplate = [
+  { date: "Apr–Oct", title: "Men’s League", details: "Weekly — call to join." },
+  { date: "Apr–Oct", title: "Ladies League", details: "Weekly — call to join." },
+  { date: "Seasonal", title: "Scrambles / Tournaments", details: "Check back for posted dates." },
+];
+
+function classNames(...xs) {
+  return xs.filter(Boolean).join(" ");
+}
+
+function Badge({ children }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-800">
+      {children}
+    </span>
+  );
+}
+
+function Card({ children, className = "" }) {
+  return (
+    <div className={classNames("rounded-2xl bg-white/80 shadow-sm ring-1 ring-black/5", className)}>
+      {children}
     </div>
-  </header>
+  );
+}
 
-  <div class="container banner-wrap" id="bannerWrap" style="display:none;">
-    <div class="banner" id="bannerText"></div>
-  </div>
+export default function RollingGreensSiteDraft() {
+  
 
-  <main class="container">
-    <section class="hero">
-      <div class="grid2">
-        <div>
-          <div class="pill">Fast updates • Daily specials • Easy contact</div>
-          <h1>Your home for rates, specials, and course updates — all in one spot.</h1>
-          <p class="lead">
-            Rolling Greens Golf Course in Mount Sterling, IL. Check today’s special, course status, and conditions.
-            Online tee times coming soon — for now, call the pro shop.
-          </p>
+  // Temporary override + banner (stored locally so you can update from your phone)
+  const [override, setOverride] = useState({
+    enabled: false,
+    title: "",
+    value: "",
+    note: "",
+    bannerEnabled: true,
+    bannerText: "",
+  });
 
-          <div class="actions">
-            <a class="btn" href="tel:2177733085">Book by Phone (for now)</a>
-            <a class="btn secondary" href="#conditions">View Course Conditions</a>
+  const day = useMemo(() => new Date().getDay(), []); // 0=Sun..6=Sat
+
+  const isAdmin = useMemo(() => {
+    try {
+      return new URLSearchParams(window.location.search).get("admin") === "1";
+    } catch {
+      return false;
+    }
+  }, []);
+
+  // Load saved override settings
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("rg_override_v1");
+      if (raw) setOverride((prev) => ({ ...prev, ...JSON.parse(raw) }));
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // Persist override settings
+  useEffect(() => {
+    try {
+      localStorage.setItem("rg_override_v1", JSON.stringify(override));
+    } catch {
+      // ignore
+    }
+  }, [override]);
+
+  const announcements = useMemo(() => buildAnnouncements(day, override), [day, override]);
+
+  const bannerText = useMemo(() => {
+    if (!override.bannerEnabled) return "";
+    return (override.bannerText || "").trim() || getDefaultBanner(day);
+  }, [day, override.bannerEnabled, override.bannerText]);
+
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+
+  const mapQuery = useMemo(() => {
+    const q = encodeURIComponent(`${course.name} ${course.city}`);
+    return `https://www.google.com/maps/search/?api=1&query=${q}`;
+  }, []);
+
+  const callHref = useMemo(() => {
+    const digits = course.phone.replace(/[^0-9]/g, "");
+    return digits ? `tel:${digits}` : "#";
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-emerald-50 via-white to-white text-slate-900">
+      {/* Top bar */}
+      <header className="sticky top-0 z-40 border-b border-black/5 bg-white/70 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="h-11 w-11 overflow-hidden rounded-xl bg-white ring-1 ring-black/10">
+              {/* If your logo has transparency, it will look great here */}
+              <img
+                src={LOGO_URL}
+                alt={`${course.name} logo`}
+                className="h-full w-full object-contain p-1"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            </div>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold tracking-tight">{course.name}</div>
+              <div className="text-xs text-slate-600">{course.city}</div>
+            </div>
           </div>
 
-          <div class="meta">
-            <span>Hours: <b>Dawn to Dusk (seasonal)</b></span>
-            <span>Address: <b>750 E Street, Mount Sterling, IL</b></span>
-            <a class="btn secondary" style="padding:8px 12px" id="directionsBtn" target="_blank" rel="noreferrer">Directions</a>
+          <nav className="hidden items-center gap-2 md:flex">
+            <a href="#rates" className="rounded-xl px-3 py-2 text-sm font-medium hover:bg-slate-100">
+              Rates
+            </a>
+            <a href="#events" className="rounded-xl px-3 py-2 text-sm font-medium hover:bg-slate-100">
+              Events
+            </a>
+            <a href="#conditions" className="rounded-xl px-3 py-2 text-sm font-medium hover:bg-slate-100">
+              Conditions
+            </a>
+            <a href="#contact" className="rounded-xl px-3 py-2 text-sm font-medium hover:bg-slate-100">
+              Contact
+            </a>
+          </nav>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={callHref}
+              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+            >
+              <Phone className="h-4 w-4" />
+              Call
+            </a>
           </div>
         </div>
+      </header>
 
-        <div class="card">
-          <div class="card-pad">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-              <h3 style="margin:0">Today at Rolling Greens</h3>
-              <span class="badge">Live board</span>
+      {/* Hero */}
+      {/* Today’s Special Banner */}
+      {(() => {
+        const day = new Date().getDay();
+        if (day === 1) {
+          return (
+            <div className="bg-emerald-600 text-white">
+              <div className="mx-auto max-w-6xl px-4 py-3 text-center text-sm font-semibold">
+                🎯 Today’s Special: $30 Unlimited Play — All Day (Season-long Monday Deal)
+              </div>
+            </div>
+          );
+        }
+        if (day === 2) {
+          return (
+            <div className="bg-emerald-600 text-white">
+              <div className="mx-auto max-w-6xl px-4 py-3 text-center text-sm font-semibold">
+                🌭 Today’s Special: $30 Senior / Ladies (60+) — 18 Holes + Free Hot Dog & Chips
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })()}
+
+      {bannerText ? (
+        <div className="mx-auto max-w-6xl px-4 pt-4">
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-900">
+            {bannerText}
+          </div>
+        </div>
+      ) : null}
+
+      <section className="mx-auto max-w-6xl px-4 pb-10 pt-8">
+        <div className="grid items-center gap-6 md:grid-cols-2">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-900">
+              <Info className="h-4 w-4" />
+              Fast updates • Specials • Easy booking
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
+              Everything golfers need — rates, specials, and course updates — in one place.
+            </h1>
+            <p className="mt-3 max-w-prose text-base text-slate-700">
+              Keep golfers informed with clear conditions, simple contact options, and a “Book Now” button once you choose a tee time system.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href={callHref}
+                className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700"
+              >
+                <Flag className="h-4 w-4" />
+                Book by Phone (for now)
+              </a>
+              <a
+                href="#conditions"
+                className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-black/10 hover:bg-slate-50"
+              >
+                <CloudSun className="h-4 w-4" />
+                View Today’s Conditions
+              </a>
             </div>
 
-            <div class="board" id="board"></div>
-
-            <div class="admin" id="adminBox" style="display:none;">
-              <div style="font-weight:900;">Admin: Temporary Override + Banner</div>
-              <small>Open with <b>?admin=1</b> to edit (saved on this device).</small>
-
-              <div class="row">
-                <label class="toggle">
-                  <input type="checkbox" id="ovEnabled" />
-                  Enable override
-                </label>
-                <label class="toggle">
-                  <input type="checkbox" id="bannerEnabled" />
-                  Show banner
-                </label>
-              </div>
-
-              <div class="row">
-                <button class="preset" id="presetOuting" type="button">Closed for Outing</button>
-                <button class="preset" id="presetRange" type="button">Range Closed</button>
-                <button class="preset" id="presetWet" type="button">Wet Conditions</button>
-              </div>
-
-              <div class="row">
-                <input class="field" id="ovTitle" placeholder="Override title (ex: Frost Delay / Closed for Outing)" />
-                <input class="field" id="ovValue" placeholder="Override value (ex: CLOSED until 10:00am)" />
-                <input class="field" id="ovNote" placeholder="Override note (optional)" />
-                <input class="field" id="ovBannerText" placeholder="Banner text (leave blank = auto today’s special)" />
-              </div>
-
-              <small>Tip: Turn override on for rain/frost/outing days. Turn it off to return to normal.</small>
+            <div className="mt-6 flex flex-wrap gap-4 text-sm text-slate-600">
+              <span className="inline-flex items-center gap-2">
+                <Clock className="h-4 w-4" /> {course.hours}
+              </span>
+              <a
+                className="inline-flex items-center gap-2 hover:text-slate-900"
+                href={mapQuery}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MapPin className="h-4 w-4" /> Directions
+              </a>
             </div>
           </div>
+
+          <Card className="p-4 md:p-6">
+            <div className="flex items-center justify-between">
+              <div className="text-sm font-semibold">Today at Rolling Greens</div>
+              <Badge>Live board</Badge>
+            </div>
+            <div className="mt-4 grid gap-3">
+              {announcements.map((item) => (
+                <div key={item.title} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-black/5">
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-medium text-slate-500">{item.title}</div>
+                    <span className="text-xs text-slate-500">{item.badge}</span>
+                  </div>
+                  <div className="mt-1 text-lg font-semibold">{item.value}</div>
+                  <div className="mt-1 text-sm text-slate-600">{item.note}</div>
+                </div>
+              ))}
+            </div>
+
+            {isAdmin ? (
+              <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4">
+                <div className="text-sm font-semibold">Admin: Temporary Override + Banner</div>
+                <p className="mt-1 text-sm text-slate-600">
+                  Open this page with <span className="font-mono">?admin=1</span> to edit. Saved on this device.
+                </p>
+
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setOverride({
+                      enabled: true,
+                      title: "Closed for Outing",
+                      value: "Course Closed",
+                      note: "Reopening after scheduled outing.",
+                      bannerEnabled: true,
+                      bannerText: "Closed for Outing Today",
+                    })}
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                  >
+                    Closed for Outing
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOverride({
+                      enabled: true,
+                      title: "Range Closed",
+                      value: "Practice Range Closed",
+                      note: "Course remains open.",
+                      bannerEnabled: true,
+                      bannerText: "Range Closed Today",
+                    })}
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                  >
+                    Range Closed
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOverride({
+                      enabled: true,
+                      title: "Course Closed",
+                      value: "Closed Due to Wet Conditions",
+                      note: "Please check back for updates.",
+                      bannerEnabled: true,
+                      bannerText: "Course Closed — Wet Conditions",
+                    })}
+                    className="rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                  >
+                    Wet Conditions
+                  </button>
+                  <label className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm ring-1 ring-black/5">
+                    <input
+                      type="checkbox"
+                      checked={override.enabled}
+                      onChange={(e) => setOverride((o) => ({ ...o, enabled: e.target.checked }))}
+                    />
+                    Enable override
+                  </label>
+                  <label className="inline-flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-sm ring-1 ring-black/5">
+                    <input
+                      type="checkbox"
+                      checked={override.bannerEnabled}
+                      onChange={(e) => setOverride((o) => ({ ...o, bannerEnabled: e.target.checked }))}
+                    />
+                    Show banner
+                  </label>
+                </div>
+
+                <div className="mt-3 grid gap-3">
+                  <input
+                    value={override.title}
+                    onChange={(e) => setOverride((o) => ({ ...o, title: e.target.value }))}
+                    placeholder="Override title (ex: Frost Delay / Closed for Outing)"
+                    className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    value={override.value}
+                    onChange={(e) => setOverride((o) => ({ ...o, value: e.target.value }))}
+                    placeholder="Override value (ex: CLOSED until 10:00am)"
+                    className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    value={override.note}
+                    onChange={(e) => setOverride((o) => ({ ...o, note: e.target.value }))}
+                    placeholder="Override note (optional)"
+                    className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <input
+                    value={override.bannerText}
+                    onChange={(e) => setOverride((o) => ({ ...o, bannerText: e.target.value }))}
+                    placeholder="Banner text (leave blank to auto-show today's special)"
+                    className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+
+                <div className="mt-3 text-xs text-slate-500">
+                  Tip: For rain/frost/outing days, enable override and type your message. To go back to normal, just
+                  uncheck “Enable override.”
+                </div>
+              </div>
+            ) : null}
+
+            <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+              <div className="text-sm font-semibold text-emerald-900">Want texts for frost delays & updates?</div>
+              <div className="mt-1 text-sm text-emerald-900/80">
+                Add a simple signup here (email/text). We can connect this to Mailchimp, Constant Contact, or a text
+                provider later.
+              </div>
+              <form
+                className="mt-3 flex gap-2"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Draft only — connect this form to email/text service when ready.");
+                }}
+              >
+                <input
+                  value={newsletterEmail}
+                  onChange={(e) => setNewsletterEmail(e.target.value)}
+                  placeholder="Email or phone"
+                  className="w-full rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
+                >
+                  <Mail className="h-4 w-4" />
+                  Join
+                </button>
+              </form>
+            </div>
+          </Card>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="section" id="rates">
-      <div class="section-head">
-        <div>
-          <h2>Rates & Specials</h2>
-          <p>Weekly specials are season-long unless noted.</p>
+      {/* Quick links grid */}
+      <section className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {quickLinks.map((q) => {
+            const Icon = q.icon;
+            return (
+              <Card key={q.title} className="p-5">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-2xl bg-emerald-50 p-3 ring-1 ring-emerald-100">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">{q.title}</div>
+                    <div className="mt-1 text-sm text-slate-600">{q.desc}</div>
+                    <a
+                      href={q.href}
+                      className="mt-3 inline-flex items-center rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+                    >
+                      {q.cta}
+                    </a>
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
         </div>
-        <span class="badge">Updated</span>
-      </div>
+      </section>
 
-      <div class="grid4" id="ratesGrid"></div>
-    </section>
-
-    <section class="section" id="conditions">
-      <div class="section-head">
-        <div>
-          <h2>Course Conditions</h2>
-          <p>Use the banner/override for closures, delays, and important notices.</p>
-        </div>
-        <span class="badge">Updateable</span>
-      </div>
-
-      <div class="grid4">
-        <div class="rate">
-          <div class="label">Maintenance Notice</div>
-          <div class="price">Aeration / Topdressing</div>
-          <div class="note" style="margin-top:6px;color:var(--muted);font-weight:700;">
-            Add dates here when needed (ex: “Greens aeration Apr 15–16”).
+      {/* Rates */}
+      <section id="rates" className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">Rates</h2>
+            <p className="mt-1 text-sm text-slate-600">Current green fees and weekly specials.</p>
           </div>
+          <Badge>Editable</Badge>
         </div>
-        <div class="rate">
-          <div class="label">Cart Rules</div>
-          <div class="price">Path Only / 90° Rule</div>
-          <div class="note" style="margin-top:6px;color:var(--muted);font-weight:700;">
-            Post daily cart rule + wet areas. Follow signage and staff direction.
+        <Card className="p-5">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {ratesTemplate.map((r) => (
+              <div key={r.label} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-black/5">
+                <div className="text-xs font-medium text-slate-500">{r.label}</div>
+                <div className="mt-1 text-lg font-semibold">{r.value}</div>
+              </div>
+            ))}
           </div>
-        </div>
-        <div class="rate">
-          <div class="label">Frost Delays</div>
-          <div class="price">Call Pro Shop</div>
-          <div class="note" style="margin-top:6px;color:var(--muted);font-weight:700;">
-            If frost is present, we’ll post an override or call for updates.
+          <div className="mt-4 text-sm text-slate-600">
+            Tip: Add one small line for specials (e.g., twilight, senior, junior) and one line for membership info.
           </div>
-        </div>
-        <div class="rate">
-          <div class="label">Tee Times</div>
-          <div class="price">Online Coming Soon</div>
-          <div class="note" style="margin-top:6px;color:var(--muted);font-weight:700;">
-            Once a booking system is chosen, we’ll add a “Book Now” button.
-          </div>
-        </div>
-      </div>
-    </section>
+        </Card>
+      </section>
 
-    <section class="section" id="contact">
-      <div class="section-head">
-        <div>
-          <h2>Contact & Directions</h2>
-          <p>Make it dead-simple for golfers to reach you.</p>
+      {/* Events */}
+      <section id="events" className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">Leagues & Events</h2>
+            <p className="mt-1 text-sm text-slate-600">League info, tournaments, and outing details.</p>
+          </div>
+          <Badge>Season</Badge>
         </div>
-        <span class="badge">Quick</span>
-      </div>
+        <Card className="p-5">
+          <div className="grid gap-3 md:grid-cols-3">
+            {eventsTemplate.map((e) => (
+              <div key={e.title} className="rounded-2xl bg-slate-50 p-4 ring-1 ring-black/5">
+                <div className="text-xs font-medium text-slate-500">{e.date}</div>
+                <div className="mt-1 text-base font-semibold">{e.title}</div>
+                <div className="mt-1 text-sm text-slate-600">{e.details}</div>
+              </div>
+            ))}
+          </div>
 
-      <div class="contact-grid">
-        <div class="card">
-          <div class="card-pad">
-            <div style="display:grid;gap:10px">
-              <div><b>Phone:</b> <a href="tel:2177733085">217-773-3085</a></div>
-              <div><b>Address:</b> 750 E Street, Mount Sterling, IL</div>
-              <div><b>Hours:</b> Dawn to Dusk (seasonal)</div>
+          <div className="mt-5 grid gap-4 md:grid-cols-2" id="outing">
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+              <div className="text-sm font-semibold text-emerald-900">Book an Outing</div>
+              <div className="mt-1 text-sm text-emerald-900/80">
+                Scrambles, fundraisers, company golf days, and group events — we’ll help with tee times, scoring, and a smooth check-in.
+              </div>
+              <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-emerald-900/90">
+                <li>Flexible start times (shotgun or tee times)</li>
+                <li>Scorecards & simple scoring support</li>
+                <li>Food & drink options available</li>
+              </ul>
+              <div className="mt-4 flex flex-wrap gap-3">
+                <a
+                  href={callHref}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
+                >
+                  <Phone className="h-4 w-4" />
+                  Call to Book
+                </a>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 ring-1 ring-black/10 hover:bg-slate-50"
+                >
+                  <Mail className="h-4 w-4" />
+                  Request Outing Info
+                </a>
+              </div>
+              <div className="mt-3 text-xs text-emerald-900/70">
+                Tip: Use <span className="font-mono">?admin=1</span> to post day-of updates like “Closed for outing” or “Range closed.”
+              </div>
+            </div>
+
+            <div className="rounded-2xl bg-slate-50 p-5 ring-1 ring-black/5">
+              <div className="text-sm font-semibold">Promote your event</div>
+              <div className="mt-1 text-sm text-slate-600">
+                We can post your flyer, registration details, and live course updates right here so players always know what’s happening.
+              </div>
+              <div className="mt-4 rounded-2xl bg-white p-4 ring-1 ring-black/10">
+                <div className="text-xs font-medium text-slate-500">Example post</div>
+                <div className="mt-1 text-sm font-semibold">Saturday Scramble • 9:00 AM shotgun</div>
+                <div className="mt-1 text-sm text-slate-600">Registration opens at 7:30 AM • Call the pro shop with questions.</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-3">
+            <a
+              href={callHref}
+              className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white hover:bg-emerald-700"
+            >
+              <Phone className="h-4 w-4" />
+              Call for Leagues or Events
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-2 rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 ring-1 ring-black/10 hover:bg-slate-50"
+            >
+              <Mail className="h-4 w-4" />
+              Request Info
+            </a>
+          </div>
+        </Card>
+      </section>
+
+      {/* Conditions */}
+      <section id="conditions" className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">Course Conditions</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Keep this updated from your phone: aeration dates, cart policy, frost delays, specials.
+            </p>
+          </div>
+          <Badge>Updateable</Badge>
+        </div>
+        <Card className="p-5">
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-black/5">
+              <div className="text-xs font-medium text-slate-500">Maintenance Notice</div>
+              <div className="mt-1 text-base font-semibold">Aeration / Topdressing</div>
+              <div className="mt-1 text-sm text-slate-600">
+                Add dates here (e.g., “Greens aeration: Apr 15–16. Please expect slower greens for 7–10 days.”)
+              </div>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-black/5">
+              <div className="text-xs font-medium text-slate-500">Cart Rules</div>
+              <div className="mt-1 text-base font-semibold">Path Only / 90° Rule</div>
+              <div className="mt-1 text-sm text-slate-600">
+                Post daily rule + wet areas. Add “No carts past this point” notes.
+              </div>
+            </div>
+          </div>
+          <div className="mt-4 text-sm text-slate-600">
+            When you choose a tee time system, we’ll add a “Book Now” button that goes straight into it.
+          </div>
+        </Card>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="mx-auto max-w-6xl px-4 pb-16">
+        <div className="mb-4">
+          <h2 className="text-2xl font-semibold tracking-tight">Contact & Directions</h2>
+          <p className="mt-1 text-sm text-slate-600">Make it dead-simple for golfers to reach you.</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Card className="p-5 md:col-span-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <a class="btn secondary" id="directionsBtn2" target="_blank" rel="noreferrer">Open in Maps</a>
+                <div className="text-sm font-semibold">Pro Shop</div>
+                <a href={callHref} className="mt-2 inline-flex items-center gap-2 text-sm text-emerald-700 hover:text-emerald-800">
+                  <Phone className="h-4 w-4" /> {course.phone}
+                </a>
+                <div className="mt-2 text-sm text-slate-600">Hours: {course.hours}</div>
+              </div>
+              <div>
+                <div className="text-sm font-semibold">Location</div>
+                <a
+                  href={mapQuery}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 inline-flex items-center gap-2 text-sm text-emerald-700 hover:text-emerald-800"
+                >
+                  <MapPin className="h-4 w-4" /> Open in Maps
+                </a>
+                <div className="mt-2 text-sm text-slate-600">{course.addressLine2}</div>
               </div>
             </div>
+
+            <div className="mt-5 rounded-2xl bg-slate-50 p-4 ring-1 ring-black/5">
+              <div className="text-sm font-semibold">Request info (draft form)</div>
+              <p className="mt-1 text-sm text-slate-600">Use this for leagues, outings, memberships, or general questions.</p>
+              <form
+                className="mt-4 grid gap-3"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  alert("Draft only — connect this to email or a CRM form later.");
+                }}
+              >
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <input
+                    className="rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Name"
+                  />
+                  <input
+                    className="rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="Email or phone"
+                  />
+                </div>
+                <select className="rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  <option>What can we help with?</option>
+                  <option>Tee times</option>
+                  <option>Memberships</option>
+                  <option>League signup</option>
+                  <option>Outing / tournament</option>
+                  <option>Lessons</option>
+                  <option>Other</option>
+                </select>
+                <textarea
+                  className="min-h-[120px] rounded-2xl bg-white px-4 py-3 text-sm ring-1 ring-black/10 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="Message"
+                />
+                <button className="inline-flex items-center justify-center gap-2 rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white hover:bg-slate-800">
+                  Send
+                </button>
+              </form>
+            </div>
+          </Card>
+
+          <Card className="p-5">
+            <div className="text-sm font-semibold">Social & Share</div>
+            <p className="mt-1 text-sm text-slate-600">
+              Add your Facebook/Instagram — golfers will share conditions and events.
+            </p>
+            <div className="mt-4 grid gap-2">
+              <a
+                href={course.facebookUrl}
+                className="inline-flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-sm ring-1 ring-black/5 hover:bg-slate-100"
+              >
+                Facebook <Share2 className="h-4 w-4" />
+              </a>
+              <a
+                href={course.instagramUrl}
+                className="inline-flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3 text-sm ring-1 ring-black/5 hover:bg-slate-100"
+              >
+                Instagram <Share2 className="h-4 w-4" />
+              </a>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-4">
+              <div className="text-sm font-semibold">Next upgrades</div>
+              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-slate-700">
+                <li>Pick a tee time system → add “Book Now” integration</li>
+                <li>Installable “app” (PWA) so golfers can add to home screen</li>
+                <li>Admin panel for quick course updates from your phone</li>
+                <li>Online payments for leagues/outings (Stripe)</li>
+              </ul>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <footer className="border-t border-black/5 bg-white">
+        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 md:flex-row md:items-center md:justify-between">
+          <div className="text-sm text-slate-600">
+            © {new Date().getFullYear()} {course.name} • {course.city}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <a href="#" className="rounded-xl px-3 py-2 text-sm hover:bg-slate-100">Privacy</a>
+            <a href="#" className="rounded-xl px-3 py-2 text-sm hover:bg-slate-100">Accessibility</a>
+            <a href="#" className="rounded-xl px-3 py-2 text-sm hover:bg-slate-100">Terms</a>
           </div>
         </div>
-
-        <div class="card">
-          <div class="card-pad">
-            <b>Weekly Specials</b>
-            <div style="margin-top:10px;color:var(--muted);font-weight:700;">
-              Monday: $30 Unlimited Play (Season-long) <br/>
-              Tuesday (60+): $30 — 18 holes + free hot dog & chips
-            </div>
-            <div style="margin-top:10px">
-              <a class="btn" href="#rates">View Rates</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer>
-      © <span id="yr"></span> Rolling Greens Golf Course • Mount Sterling, IL
-    </footer>
-  </main>
-
-  <script>
-    const PHONE = "217-773-3085";
-    const ADDRESS = "750 E Street, Mount Sterling, IL";
-    const LS_KEY = "rg_override_v1";
-
-    const rates = [
-      { label: "Monday Unlimited Play (Season-long)", value: "$30" },
-      { label: "Tuesday Senior / Ladies Special (60+)", value: "$30" },
-      { label: "Tuesday Special Includes", value: "18 holes + free hot dog & chips" },
-      { label: "Weekday 18 (with cart)", value: "$42" },
-      { label: "Weekend 18 (with cart)", value: "$47" },
-      { label: "Weekday 9 (with cart)", value: "$26" },
-      { label: "Weekend 9 (with cart)", value: "$31" }
-    ];
-
-    function defaultBanner(day){
-      if(day === 1) return "Today’s Special: $30 Monday Unlimited Play (Season-long)";
-      if(day === 2) return "Today’s Special: $30 Tuesday Senior/Ladies (60+) — Free hot dog & chips";
-      return "";
-    }
-
-    function buildBoard(day, override){
-      const base = [
-        { title: "Course Status", value: "OPEN", note: "Call pro shop for frost delays.", badge: "Today" },
-        { title: "Cart Policy", value: "90° Rule", note: "Please follow signage and staff direction.", badge: "Update" }
-      ];
-
-      // weekly specials
-      if(day === 1){
-        base.push({ title: "Monday Special", value: "$30 Unlimited Play", note: "Season-long deal. Play all day.", badge: "Special" });
-      }
-      if(day === 2){
-        base.push({ title: "Tuesday Senior / Ladies Special", value: "$30 — 18 Holes", note: "60+ • Includes free hot dog & chips.", badge: "Special" });
-      }
-
-      // override at top
-      if(override?.enabled && (override.title || override.value || override.note)){
-        base.unshift({
-          title: override.title || "Notice",
-          value: override.value || "",
-          note: override.note || "",
-          badge: "Override"
-        });
-      }
-
-      base.push({ title: "Greens", value: "Good", note: "Pin sheet posted daily in the pro shop.", badge: "Conditions" });
-      return base;
-    }
-
-    function renderRates(){
-      const grid = document.getElementById("ratesGrid");
-      grid.innerHTML = "";
-      rates.forEach(r => {
-        const div = document.createElement("div");
-        div.className = "rate";
-        div.innerHTML = `<div class="label">${r.label}</div><div class="price">${r.value}</div>`;
-        grid.appendChild(div);
-      });
-    }
-
-    function renderBoard(items){
-      const board = document.getElementById("board");
-      board.innerHTML = "";
-      items.forEach(item => {
-        const t = document.createElement("div");
-        t.className = "tile";
-        t.innerHTML = `
-          <div class="top">
-            <div>${item.title}</div>
-            <div>${item.badge}</div>
-          </div>
-          <div class="val">${item.value}</div>
-          ${item.note ? `<div class="note">${item.note}</div>` : ``}
-        `;
-        board.appendChild(t);
-      });
-    }
-
-    function getOverride(){
-      try{
-        const raw = localStorage.getItem(LS_KEY);
-        if(!raw) return { enabled:false, title:"", value:"", note:"", bannerEnabled:true, bannerText:"" };
-        const parsed = JSON.parse(raw);
-        return {
-          enabled: !!parsed.enabled,
-          title: parsed.title || "",
-          value: parsed.value || "",
-          note: parsed.note || "",
-          bannerEnabled: parsed.bannerEnabled !== false,
-          bannerText: parsed.bannerText || ""
-        };
-      }catch{
-        return { enabled:false, title:"", value:"", note:"", bannerEnabled:true, bannerText:"" };
-      }
-    }
-
-    function saveOverride(ov){
-      localStorage.setItem(LS_KEY, JSON.stringify(ov));
-    }
-
-    function renderBanner(day, ov){
-      const wrap = document.getElementById("bannerWrap");
-      const el = document.getElementById("bannerText");
-      const text = ov.bannerEnabled ? ((ov.bannerText || "").trim() || defaultBanner(day)) : "";
-      if(text){
-        el.textContent = text;
-        wrap.style.display = "block";
-      }else{
-        wrap.style.display = "none";
-      }
-    }
-
-    function initAdmin(ov, day){
-      const params = new URLSearchParams(window.location.search);
-      const isAdmin = params.get("admin") === "1";
-      const box = document.getElementById("adminBox");
-      if(!isAdmin) return;
-
-      box.style.display = "block";
-
-      const ovEnabled = document.getElementById("ovEnabled");
-      const bannerEnabled = document.getElementById("bannerEnabled");
-      const ovTitle = document.getElementById("ovTitle");
-      const ovValue = document.getElementById("ovValue");
-      const ovNote = document.getElementById("ovNote");
-      const ovBannerText = document.getElementById("ovBannerText");
-
-      function sync(){
-        ovEnabled.checked = ov.enabled;
-        bannerEnabled.checked = ov.bannerEnabled !== false;
-        ovTitle.value = ov.title || "";
-        ovValue.value = ov.value || "";
-        ovNote.value = ov.note || "";
-        ovBannerText.value = ov.bannerText || "";
-      }
-      function apply(){
-        saveOverride(ov);
-        renderBanner(day, ov);
-        renderBoard(buildBoard(day, ov));
-      }
-
-      sync();
-
-      ovEnabled.addEventListener("change", e => { ov.enabled = e.target.checked; apply(); });
-      bannerEnabled.addEventListener("change", e => { ov.bannerEnabled = e.target.checked; apply(); });
-      ovTitle.addEventListener("input", e => { ov.title = e.target.value; apply(); });
-      ovValue.addEventListener("input", e => { ov.value = e.target.value; apply(); });
-      ovNote.addEventListener("input", e => { ov.note = e.target.value; apply(); });
-      ovBannerText.addEventListener("input", e => { ov.bannerText = e.target.value; apply(); });
-
-      document.getElementById("presetOuting").addEventListener("click", () => {
-        ov.enabled = true;
-        ov.title = "Closed for Outing";
-        ov.value = "Course Closed";
-        ov.note = "Reopening after scheduled outing.";
-        ov.bannerEnabled = true;
-        ov.bannerText = "Closed for Outing Today";
-        sync(); apply();
-      });
-
-      document.getElementById("presetRange").addEventListener("click", () => {
-        ov.enabled = true;
-        ov.title = "Range Closed";
-        ov.value = "Practice Range Closed";
-        ov.note = "Course remains open.";
-        ov.bannerEnabled = true;
-        ov.bannerText = "Range Closed Today";
-        sync(); apply();
-      });
-
-      document.getElementById("presetWet").addEventListener("click", () => {
-        ov.enabled = true;
-        ov.title = "Course Closed";
-        ov.value = "Closed Due to Wet Conditions";
-        ov.note = "Please check back for updates.";
-        ov.bannerEnabled = true;
-        ov.bannerText = "Course Closed — Wet Conditions";
-        sync(); apply();
-      });
-    }
-
-    // boot
-    document.getElementById("yr").textContent = new Date().getFullYear();
-
-    const mapUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Rolling Greens Golf Course " + ADDRESS);
-    document.getElementById("directionsBtn").href = mapUrl;
-    document.getElementById("directionsBtn2").href = mapUrl;
-
-    renderRates();
-
-    const day = new Date().getDay(); // 0=Sun..6=Sat
-    const override = getOverride();
-
-    renderBanner(day, override);
-    renderBoard(buildBoard(day, override));
-    initAdmin(override, day);
-  </script>
-</body>
-</html>
+      </footer>
+    </div>
+  );
+}
