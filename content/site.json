@@ -1,0 +1,33 @@
+{
+  "courseName": "Rolling Greens Golf Course",
+  "phone": "217-773-3085",
+  "address": "750 E Street, Mount Sterling, IL",
+  "hours": "Dawn to Dusk (Seasonal)",
+
+  "heroHeadline": "Everything Golfers Need In One Place",
+  "heroSubtext": "Rates, Specials, Course Conditions, And Outing Information At Rolling Greens Golf Course.",
+
+  "rates": [
+    { "label": "Monday Unlimited Play", "price": "$30" },
+    { "label": "Tuesday Senior / Ladies (60+)", "price": "$30" },
+    { "label": "Weekday 18 With Cart", "price": "$42" },
+    { "label": "Weekend 18 With Cart", "price": "$47" }
+  ],
+
+  "specials": [
+    { "day": "Monday", "description": "Unlimited Play — $30 (Season Long)" },
+    { "day": "Tuesday", "description": "Senior / Ladies (60+) — Free Hot Dog & Chips" }
+  ],
+
+  "outing": {
+    "headline": "Book An Outing",
+    "description": "Scrambles, Fundraisers, Company Golf Days, And Group Events.",
+    "bullets": [
+      "Shotgun Or Tee Time Starts",
+      "Simple Scoring Support",
+      "Food And Drink Options Available"
+    ]
+  },
+
+  "footer": "© Rolling Greens Golf Course — Mount Sterling, IL"
+}
