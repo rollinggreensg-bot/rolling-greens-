@@ -1,0 +1,52 @@
+backend:
+  name: github
+  repo: YOUR_GITHUB_USERNAME/rollinggreensg-bot
+  branch: main
+
+media_folder: "content/images"
+public_folder: "/content/images"
+
+site_url: https://rollinggreensg.com
+
+collections:
+  - name: "site"
+    label: "Website Content"
+    files:
+      - file: "content/site.json"
+        label: "Main Site Content"
+        name: "main"
+        fields:
+          - { label: "Course Name", name: "courseName", widget: "string" }
+          - { label: "Phone", name: "phone", widget: "string" }
+          - { label: "Address", name: "address", widget: "string" }
+          - { label: "Hours", name: "hours", widget: "string" }
+
+          - { label: "Hero Headline", name: "heroHeadline", widget: "string" }
+          - { label: "Hero Subtext", name: "heroSubtext", widget: "text" }
+
+          - label: "Rates"
+            name: "rates"
+            widget: "list"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "Price", name: "price", widget: "string" }
+
+          - label: "Weekly Specials"
+            name: "specials"
+            widget: "list"
+            fields:
+              - { label: "Day", name: "day", widget: "string" }
+              - { label: "Description", name: "description", widget: "string" }
+
+          - label: "Outing Section"
+            name: "outing"
+            widget: "object"
+            fields:
+              - { label: "Headline", name: "headline", widget: "string" }
+              - { label: "Description", name: "description", widget: "text" }
+              - label: "Bullets"
+                name: "bullets"
+                widget: "list"
+                field: { label: "Bullet", name: "bullet", widget: "string" }
+
+          - { label: "Footer Text", name: "footer", widget: "string" }
